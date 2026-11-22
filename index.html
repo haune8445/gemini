@@ -1,0 +1,362 @@
+<!-- ============================================================================
+     FILE 2: public/index.html — Giao Diện Web Tự Động Nhận Rương Xu Real-Time
+     ============================================================================ -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axiom Auto Radar — Tự Động Quét Rương Xu TikTok Live</title>
+  <style>
+    :root {
+      --bg: #080a0f;
+      --panel: #10141f;
+      --panel-2: #161c2b;
+      --text: #f4f7ff;
+      --muted: #8b96b0;
+      --accent: #fe2c55;
+      --teal: #25f4ee;
+      --gold: #ffc83d;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 10% 8%, rgba(254, 44, 85, 0.14), transparent 36%),
+        radial-gradient(circle at 90% 10%, rgba(37, 244, 238, 0.12), transparent 36%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 22px 16px 60px; }
+    header {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 20px; margin-bottom: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--teal));
+      display: grid; place-items: center; font-weight: 900; color: #080a0f;
+    }
+    h1 { margin: 0; font-size: 18px; }
+    .sub { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 13px; border-radius: 999px;
+      background: var(--panel-2); border: 1px solid var(--border);
+      font-size: 12.5px; font-weight: 700;
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+    .top-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 18px; }
+    @media (max-width: 900px) { .top-grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+    }
+    .card-title {
+      margin: 0 0 12px; font-size: 14.5px; font-weight: 700;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 650px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+    .stat { background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+    .stat-k { font-size: 11px; color: var(--muted); }
+    .stat-v { font-size: 19px; font-weight: 800; font-family: var(--mono); margin-top: 4px; }
+    .gold { color: var(--gold); }
+    .teal { color: var(--teal); }
+    .rose { color: var(--accent); }
+    textarea {
+      width: 100%; background: var(--panel-2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+      font-family: var(--mono); font-size: 12.5px; outline: none;
+    }
+    textarea:focus { border-color: var(--teal); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    button {
+      border: 0; border-radius: 10px; padding: 9px 14px; font-size: 13px;
+      font-weight: 700; cursor: pointer;
+    }
+    .btn-primary { background: linear-gradient(90deg, var(--accent), #ff5b7b); color: #fff; }
+    .btn-teal { background: rgba(37, 244, 238, 0.14); color: var(--teal); border: 1px solid rgba(37, 244, 238, 0.35); }
+    .btn-muted { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+    .console {
+      margin-top: 12px; background: #06080c; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; height: 125px; overflow-y: auto;
+      font-family: var(--mono); font-size: 11.5px; line-height: 1.5;
+    }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .err { color: var(--err); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+    .chest {
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 15px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .chest-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .badge {
+      padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 800;
+      background: rgba(255, 200, 61, 0.16); color: var(--gold); border: 1px solid rgba(255, 200, 61, 0.35);
+    }
+    .metrics {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+    }
+    .m-k { font-size: 11px; color: var(--muted); }
+    .m-v { font-size: 14px; font-weight: 800; font-family: var(--mono); margin-top: 2px; }
+    .link-row { display: flex; gap: 8px; }
+    .link-box {
+      flex: 1; min-width: 0; background: var(--panel-2); color: var(--teal);
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: var(--mono); font-size: 11.5px;
+    }
+    .btn-go {
+      background: var(--accent); color: #fff; text-decoration: none;
+      padding: 8px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 800;
+      display: inline-flex; align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">AX</div>
+        <div>
+          <h1>Radar Tự Động Quét Rương Xu TikTok Live 100%</h1>
+          <p class="sub">Server tự động bám luồng Live thật — tự đẩy link, số Xu và số người nhận về Web theo thời gian thực</p>
+        </div>
+      </div>
+      <div class="pill">
+        <span class="dot" id="wsDot"></span>
+        <span id="wsStatus">Đang kết nối Radar...</span>
+      </div>
+    </header>
+
+    <div class="top-grid">
+      <section class="card">
+        <h2 class="card-title">
+          <span>Trạng Thái Radar Tự Động 24/7</span>
+          <span style="font-size:11.5px;color:var(--teal);font-family:var(--mono);">AUTO STREAM ENGINE</span>
+        </h2>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-k">Phòng Đang Bám</div>
+            <div class="stat-v teal" id="sRooms">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-k">Rương Đã Bắt</div>
+            <div class="stat-v" id="sChests">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-k">Tổng Xu Rương</div>
+            <div class="stat-v gold" id="sCoins">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-k">Tổng Slot Nhận</div>
+            <div class="stat-v rose" id="sRecipients">0</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" id="btnToggle">Tạm Dừng / Bật Tự Động</button>
+          <button class="btn-muted" id="btnClear">Xóa Danh Sách Rương</button>
+        </div>
+        <div class="console" id="logBox"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Nạp Thêm Nguồn Kênh Cho Radar (Tùy Chọn)</h2>
+        <textarea id="seedInput" rows="4" placeholder="Nhập thêm danh sách @username (mỗi dòng 1 kênh) để Radar tự động theo dõi 24/7..."></textarea>
+        <div class="actions">
+          <button class="btn-teal" id="btnAddSeeds">Nạp Vào Radar Tự Động</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2 class="card-title">
+        <span>Rương Xu TikTok Live Vừa Bắt Được (Nhấn Vào Link Để Vào App TikTok Thật)</span>
+        <span id="chestCount" style="font-size:12px;color:var(--muted);font-family:var(--mono);">0 rương</span>
+      </h2>
+      <div class="grid" id="chestGrid"></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const chests = new Map();
+      let autoEnabled = true;
+
+      const el = {
+        wsDot: document.getElementById("wsDot"),
+        wsStatus: document.getElementById("wsStatus"),
+        sRooms: document.getElementById("sRooms"),
+        sChests: document.getElementById("sChests"),
+        sCoins: document.getElementById("sCoins"),
+        sRecipients: document.getElementById("sRecipients"),
+        logBox: document.getElementById("logBox"),
+        chestGrid: document.getElementById("chestGrid"),
+        chestCount: document.getElementById("chestCount"),
+        seedInput: document.getElementById("seedInput"),
+        btnAddSeeds: document.getElementById("btnAddSeeds"),
+        btnToggle: document.getElementById("btnToggle"),
+        btnClear: document.getElementById("btnClear")
+      };
+
+      function appendLog(msg, level = "info") {
+        const div = document.createElement("div");
+        div.className = level;
+        const t = new Date().toLocaleTimeString("vi-VN", { hour12: false });
+        div.textContent = `[${t}] ${msg}`;
+        el.logBox.appendChild(div);
+        el.logBox.scrollTop = el.logBox.scrollHeight;
+      }
+
+      function updateStats(stats) {
+        if (!stats) return;
+        autoEnabled = Boolean(stats.autoScanEnabled);
+        el.sRooms.textContent = Number(stats.watchingRooms || 0).toLocaleString("vi-VN");
+        el.sChests.textContent = Number(stats.totalChests || 0).toLocaleString("vi-VN");
+        el.sCoins.textContent = Number(stats.totalCoins || 0).toLocaleString("vi-VN");
+        el.sRecipients.textContent = Number(stats.totalRecipients || 0).toLocaleString("vi-VN");
+        el.btnToggle.textContent = autoEnabled ? "Đang Tự Động Quét (Tạm Dừng)" : "Đang Dừng (Bật Lại)";
+      }
+
+      function renderChests() {
+        const list = Array.from(chests.values()).reverse();
+        el.chestCount.textContent = `${list.length} rương`;
+        if (!list.length) {
+          el.chestGrid.innerHTML = `<div style="color:var(--muted);font-size:13px;">Radar đang tự động quét các phiên Live thật. Khi có rương xu xuất hiện, thẻ rương và link vào thẳng TikTok sẽ tự bật lên tại đây...</div>`;
+          return;
+        }
+
+        el.chestGrid.innerHTML = list.map((item) => `
+          <article class="chest">
+            <div class="chest-head">
+              <div>
+                <div style="font-weight:800;font-size:14.5px;">${esc(item.title)}</div>
+                <div style="font-size:11.5px;color:var(--muted);font-family:var(--mono);margin-top:3px;">
+                  @${esc(item.handle)} • Room: ${esc(item.roomId)} • ${esc(item.detectedAt || "")}
+                </div>
+              </div>
+              <span class="badge">CÓ RƯƠNG XU</span>
+            </div>
+
+            <div class="metrics">
+              <div>
+                <div class="m-k">Số Xu Trong Rương</div>
+                <div class="m-v gold">${Number(item.coins || 0).toLocaleString("vi-VN")} Xu</div>
+              </div>
+              <div>
+                <div class="m-k">Số Người Nhận Được</div>
+                <div class="m-v teal">${Number(item.maxRecipients || 0).toLocaleString("vi-VN")} người</div>
+              </div>
+              <div>
+                <div class="m-k">Đã Nhận</div>
+                <div class="m-v">${Number(item.claimedCount || 0).toLocaleString("vi-VN")}</div>
+              </div>
+              <div>
+                <div class="m-k">Thời Gian Mở</div>
+                <div class="m-v">${item.secondsLeft > 0 ? item.secondsLeft + "s" : "Đang mở / Sắp mở"}</div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;">Nhấn vào link để mở thẳng phiên Live trên app TikTok:</div>
+              <div class="link-row">
+                <input class="link-box" readonly value="${escAttr(item.webUrl)}" />
+                <a class="btn-go" href="${escAttr(item.webUrl)}" target="_blank" rel="noopener noreferrer">Vào Live</a>
+              </div>
+              <div style="margin-top:6px;font-size:11px;color:var(--muted);">
+                Mở nhanh App Mobile: <a href="${escAttr(item.appDeepLink)}" style="color:var(--teal);font-family:var(--mono);text-decoration:none;">${esc(item.appDeepLink)}</a>
+              </div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function connectSocket() {
+        const proto = location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${proto}//${location.host}`);
+
+        ws.onopen = () => {
+          el.wsDot.style.background = "var(--ok)";
+          el.wsStatus.textContent = "Radar Đang Chạy Tự Động 100%";
+          appendLog("Đã kết nối tới máy chủ Radar tự động.", "ok");
+        };
+
+        ws.onmessage = (ev) => {
+          try {
+            const msg = JSON.parse(ev.data);
+            if (msg.event === "init") {
+              updateStats(msg.payload.stats);
+              chests.clear();
+              (msg.payload.chests || []).forEach((c) => chests.set(c.key, c));
+              renderChests();
+            } else if (msg.event === "chest_detected") {
+              chests.set(msg.payload.key, msg.payload);
+              renderChests();
+            } else if (msg.event === "chests_sync") {
+              chests.clear();
+              (msg.payload || []).forEach((c) => chests.set(c.key, c));
+              renderChests();
+            } else if (msg.event === "stats") {
+              updateStats(msg.payload);
+            } else if (msg.event === "log") {
+              appendLog(msg.payload.message, msg.payload.level);
+            }
+          } catch {}
+        };
+
+        ws.onclose = () => {
+          el.wsDot.style.background = "var(--err)";
+          el.wsStatus.textContent = "Mất kết nối — Đang tự nối lại...";
+          setTimeout(connectSocket, 2500);
+        };
+      }
+
+      el.btnAddSeeds.addEventListener("click", async () => {
+        const handles = el.seedInput.value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+        if (!handles.length) return;
+        await fetch("/api/seeds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ handles })
+        });
+        el.seedInput.value = "";
+      });
+
+      el.btnToggle.addEventListener("click", async () => {
+        await fetch("/api/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ enabled: !autoEnabled })
+        });
+      });
+
+      el.btnClear.addEventListener("click", async () => {
+        await fetch("/api/clear", { method: "POST" });
+      });
+
+      function esc(s) {
+        return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      }
+      function escAttr(s) {
+        return esc(s).replace(/'/g, "&#39;");
+      }
+
+      renderChests();
+      connectSocket();
+    })();
+  </script>
+</body>
+</html>
